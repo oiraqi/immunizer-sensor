@@ -1,5 +1,13 @@
 This is the evolving Java implementation of the instrumentation microservice of Immunizer: The Collaborative Cloud-based Unsupervised Software Immunity Framework.
 
+**Parent**
+- https://github.com/oiraqi/immunizer
+
+**Siblings**
+- https://github.com/oiraqi/immunizer-acquisition
+- https://github.com/oiraqi/immunizer-analysis
+' https://github.com/oiraqi/immunizer-collaboration
+
 **Dependencies**
 
 All dependencies are managed through Docker and Gradle. Docker is all what you need, while Gradle distribution will be automatically fetched by Gradle wrapper, which will be downloaded from this repository by Docker.
