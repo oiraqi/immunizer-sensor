@@ -9,10 +9,12 @@ public class InvocationProducer {
 
     private static InvocationProducer singleton;
     private KafkaProducer<String, Invocation> producer;
+    private static final String BOOTSTRAP_SERVERS = "kafka-container:9092";
+    private static final String TOPIC = "Invocations";
 
     private InvocationProducer() {
         Properties props = new Properties();
-        props.put("bootstrap.servers", "kafka-container:9092");
+        props.put("bootstrap.servers", BOOTSTRAP_SERVERS);
         props.put("acks", "all");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.immunizer.instrumentation.InvocationSerializer");
@@ -27,6 +29,6 @@ public class InvocationProducer {
     }
 
     public void send(Invocation invocation) {
-        producer.send(new ProducerRecord<String, Invocation>("Invocations", invocation));
+        producer.send(new ProducerRecord<String, Invocation>(TOPIC, invocation));
     }
 }
