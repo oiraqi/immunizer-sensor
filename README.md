@@ -6,7 +6,7 @@ This is the evolving Java implementation of the instrumentation microservice of 
 **Siblings**
 - https://github.com/oiraqi/immunizer-acquisition
 - https://github.com/oiraqi/immunizer-analysis
-' https://github.com/oiraqi/immunizer-collaboration
+- https://github.com/oiraqi/immunizer-collaboration
 
 **Dependencies**
 
