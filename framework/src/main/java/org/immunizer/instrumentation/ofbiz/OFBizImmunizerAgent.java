@@ -92,7 +92,7 @@ public class OFBizImmunizerAgent {
 
 	public static class ModelMethodAdvice {
 
-		public static InvocationProducer producer = InvocationProducer.getSingleton();
+		// public static InvocationProducer producer = InvocationProducer.getSingleton();
 
 		@Advice.OnMethodEnter
 		public static Invocation onEnter(@Advice.Origin String fullyQualifiedMethodName,
@@ -140,11 +140,11 @@ public class OFBizImmunizerAgent {
 				invocation.update(null, true);
 			else
 				invocation.update(null, false);
-			try{
+			/*try{
 				producer.send(invocation);
 			} catch (Exception ex) {
 				ex.printStackTrace();
-			}
+			}*/
 		}
 	}
 }
