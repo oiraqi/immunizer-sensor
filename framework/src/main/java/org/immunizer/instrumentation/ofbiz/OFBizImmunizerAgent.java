@@ -92,7 +92,8 @@ public class OFBizImmunizerAgent {
 
 	public static class ModelMethodAdvice {
 
-		// public static InvocationProducer producer = InvocationProducer.getSingleton();
+		// public static InvocationProducer producer =
+		// InvocationProducer.getSingleton();
 
 		@Advice.OnMethodEnter
 		public static Invocation onEnter(@Advice.Origin String fullyQualifiedMethodName,
@@ -104,47 +105,50 @@ public class OFBizImmunizerAgent {
 		@Advice.OnMethodExit(onThrowable = Throwable.class)
 		public static void onExit(@Advice.Enter Invocation invocation,
 				@Advice.Return(typing = Assigner.Typing.DYNAMIC) Object result, @Advice.Thrown Throwable thrown) {
+			try {
 
-			/**
-			 * Only intercept relevant calls to
-			 * org.apache.ofbiz.entity.datasource.GenericDAO.update Relevant calls are the
-			 * ones that carry user provided data. Other calls to the update method are
-			 * triggered by OFBiz for some system-level logging such as web stats.
-			 */
-			if (invocation.getFullyQualifiedMethodName().equals(
-					"public int org.apache.ofbiz.entity.datasource.GenericDAO.update(org.apache.ofbiz.entity.GenericEntity) throws org.apache.ofbiz.entity.GenericEntityException")) {
-				boolean relevant = false;
-				// System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX");
-				for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
-					// System.out.println(ste);
-					if (ste.getClassName().equals("org.apache.ofbiz.minilang.SimpleMethod")) {
-						relevant = true;
-						break;
+				/**
+				 * Only intercept relevant calls to
+				 * org.apache.ofbiz.entity.datasource.GenericDAO.update Relevant calls are the
+				 * ones that carry user provided data. Other calls to the update method are
+				 * triggered by OFBiz for some system-level logging such as web stats.
+				 */
+				if (invocation.getFullyQualifiedMethodName().equals(
+						"public int org.apache.ofbiz.entity.datasource.GenericDAO.update(org.apache.ofbiz.entity.GenericEntity) throws org.apache.ofbiz.entity.GenericEntityException")) {
+					boolean relevant = false;
+					// System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX");
+					for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+						// System.out.println(ste);
+						if (ste.getClassName().equals("org.apache.ofbiz.minilang.SimpleMethod")) {
+							relevant = true;
+							break;
+						}
 					}
+					// System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX");
+					if (!relevant)
+						return;
 				}
-				// System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX");
-				if (!relevant)
-					return;
-			}
-			if (invocation.returns()) {
-				if (thrown != null) {
-					if (invocation.returnsNumber())
-						invocation.update(Integer.valueOf("0"), true);
+				if (invocation.returns()) {
+					if (thrown != null) {
+						if (invocation.returnsNumber())
+							invocation.update(Integer.valueOf("0"), true);
+						else
+							invocation.update("NULL", true);
+					} else if (result == null)
+						invocation.update("NULL", false);
 					else
-						invocation.update("NULL", true);
-				} else if (result == null)
-					invocation.update("NULL", false);
+						invocation.update(result, false);
+				} else if (thrown != null)
+					invocation.update(null, true);
 				else
-					invocation.update(result, false);
-			} else if (thrown != null)
-				invocation.update(null, true);
-			else
-				invocation.update(null, false);
-			/*try{
-				producer.send(invocation);
+					invocation.update(null, false);
 			} catch (Exception ex) {
 				ex.printStackTrace();
-			}*/
+			}
+			/*
+			 * try{ producer.send(invocation); } catch (Exception ex) {
+			 * ex.printStackTrace(); }
+			 */
 		}
 	}
 }
