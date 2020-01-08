@@ -22,10 +22,15 @@ public class InvocationProducer {
     }
 
     public static InvocationProducer getSingleton() {
-        if (singleton == null) {
-            singleton = new InvocationProducer();
+        try {
+            if (singleton == null) {
+                singleton = new InvocationProducer();
+            }
+            return singleton;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
         }
-        return singleton;
     }
 
     public void send(Invocation invocation) {
