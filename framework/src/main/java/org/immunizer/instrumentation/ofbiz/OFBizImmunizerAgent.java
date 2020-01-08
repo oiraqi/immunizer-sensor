@@ -140,8 +140,11 @@ public class OFBizImmunizerAgent {
 				invocation.update(null, true);
 			else
 				invocation.update(null, false);
-			
-			producer.send(invocation);
+			try{
+				producer.send(invocation);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 }
