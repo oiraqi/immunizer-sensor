@@ -1,6 +1,6 @@
 # Instrumentation Microservice of Immunizer
 
-This is the instrumentation microservice of Immunizer: The Collaborative Cloud-based Unsupervised Software Immunity Framework.
+This is the Java implementation of the instrumentation microservice of Immunizer: The Collaborative Cloud-based Unsupervised Software Immunity Framework.
 
 ## Parent
 - https://github.com/oiraqi/immunizer
