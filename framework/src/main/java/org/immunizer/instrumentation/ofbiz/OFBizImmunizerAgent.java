@@ -1,6 +1,8 @@
 package org.immunizer.instrumentation.ofbiz;
 
 import java.lang.instrument.Instrumentation;
+import java.time.Duration;
+
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.utility.JavaModule;
 import net.bytebuddy.description.type.TypeDescription;
@@ -9,10 +11,12 @@ import net.bytebuddy.agent.builder.AgentBuilder.Transformer;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 import static net.bytebuddy.matcher.ElementMatchers.*;
+
 import java.util.Random;
 
 import org.immunizer.instrumentation.Invocation;
 import org.immunizer.instrumentation.monitoring.InvocationProducer;
+import org.immunizer.instrumentation.response.InvocationConsumer;
 
 public class OFBizImmunizerAgent {
 	public static void premain(String arg, Instrumentation inst) throws Exception {
@@ -31,13 +35,17 @@ public class OFBizImmunizerAgent {
 																						// evaluation scenario (the
 																						// invoice update form)
 				.transform(new InterceptTransformer()).installOn(inst);
-				new Thread(new Runnable(){
-				
-					@Override
-					public void run() {
-						System.out.println("Hello World!");						
-					}
-				}).start();
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				InvocationConsumer consumer = new InvocationConsumer();
+				while (true) {
+					consumer.poll(Duration.ofSeconds(10));
+					System.out.println("Hello World!");
+				}
+			}
+		}).start();
 	}
 
 	private static class InterceptTransformer implements Transformer {
@@ -147,7 +155,7 @@ public class OFBizImmunizerAgent {
 				invocation.update(null, true);
 			else
 				invocation.update(null, false);
-			
+
 			producer.send(invocation);
 		}
 	}
