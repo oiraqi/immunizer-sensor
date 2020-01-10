@@ -12,7 +12,7 @@ import static net.bytebuddy.matcher.ElementMatchers.*;
 import java.util.Random;
 
 import org.immunizer.instrumentation.Invocation;
-import org.immunizer.instrumentation.InvocationProducer;
+import org.immunizer.instrumentation.monitoring.InvocationProducer;
 
 public class OFBizImmunizerAgent {
 	public static void premain(String arg, Instrumentation inst) throws Exception {
@@ -31,6 +31,13 @@ public class OFBizImmunizerAgent {
 																						// evaluation scenario (the
 																						// invoice update form)
 				.transform(new InterceptTransformer()).installOn(inst);
+				new Thread(new Runnable(){
+				
+					@Override
+					public void run() {
+						System.out.println("Hello World!");						
+					}
+				}).start();
 	}
 
 	private static class InterceptTransformer implements Transformer {

@@ -12,7 +12,7 @@ import static net.bytebuddy.matcher.ElementMatchers.*;
 import java.util.Random;
 
 import org.immunizer.instrumentation.Invocation;
-import org.immunizer.instrumentation.InvocationProducer;
+import org.immunizer.instrumentation.monitoring.InvocationProducer;
 
 public class ECommerceInterceptAgent {
 	public static void premain(String arg, Instrumentation inst) throws Exception {

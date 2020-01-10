@@ -1,9 +1,11 @@
-package org.immunizer.instrumentation;
+package org.immunizer.instrumentation.monitoring;
 
 import java.util.Properties;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+
+import org.immunizer.instrumentation.Invocation;
 
 public class InvocationProducer {
 
@@ -17,7 +19,7 @@ public class InvocationProducer {
         props.put("bootstrap.servers", BOOTSTRAP_SERVERS);
         props.put("acks", "all");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.immunizer.instrumentation.InvocationSerializer");
+        props.put("value.serializer", "org.immunizer.instrumentation.monitoring.InvocationSerializer");
         producer = new KafkaProducer<String, Invocation>(props);
     }
 

@@ -1,7 +1,9 @@
-package org.immunizer.instrumentation;
+package org.immunizer.instrumentation.monitoring;
 
 import org.apache.kafka.common.serialization.Serializer;
 import com.google.gson.Gson;
+
+import org.immunizer.instrumentation.Invocation;
 
 public class InvocationSerializer implements Serializer<Invocation> {
 
