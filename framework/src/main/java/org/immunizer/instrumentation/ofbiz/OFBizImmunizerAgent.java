@@ -14,6 +14,8 @@ import static net.bytebuddy.matcher.ElementMatchers.*;
 
 import java.util.Random;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.immunizer.instrumentation.Invocation;
 import org.immunizer.instrumentation.monitoring.InvocationProducer;
 import org.immunizer.instrumentation.response.InvocationConsumer;
@@ -41,8 +43,10 @@ public class OFBizImmunizerAgent {
 			public void run() {
 				InvocationConsumer consumer = new InvocationConsumer();
 				while (true) {
-					consumer.poll(Duration.ofSeconds(10));
-					System.out.println("Hello World!");
+					ConsumerRecords<String, Invocation> records = consumer.poll(Duration.ofSeconds(10));
+					for (ConsumerRecord<String, Invocation> record: records) {
+						System.out.println(record.value());
+					}
 				}
 			}
 		}).start();
