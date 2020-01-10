@@ -45,7 +45,7 @@ public class OFBizImmunizerAgent {
 				while (true) {
 					ConsumerRecords<String, Invocation> records = consumer.poll(Duration.ofSeconds(10));
 					for (ConsumerRecord<String, Invocation> record: records) {
-						System.out.println(record.value());
+						System.out.println(record.value().getStartTime());
 					}
 				}
 			}
