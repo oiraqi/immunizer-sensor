@@ -5,11 +5,14 @@ import java.time.Duration;
 
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.utility.JavaModule;
+import net.bytebuddy.description.method.ParameterDescription;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.agent.builder.AgentBuilder.Transformer;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
+import net.bytebuddy.matcher.ElementMatcher;
+
 import static net.bytebuddy.matcher.ElementMatchers.*;
 
 import java.util.Random;
@@ -70,8 +73,10 @@ public class OFBizImmunizerAgent {
 			// evaluation
 			/*return builder.method(isPublic().and(named("doFilter"))).intercept(Advice.to(ControllerMethodAdvice.class))
 					.method(isPublic().and(named("update"))).intercept(Advice.to(ModelMethodAdvice.class));*/
-			
-			return builder.method(isPublic()).intercept(Advice.to(ModelMethodAdvice.class));
+			ElementMatcher<Iterable<? extends ParameterDescription>> matcher = parameterDescriptions -> {
+				return (parameterDescriptions != null && parameterDescriptions.iterator().hasNext());
+			};
+			return builder.method(isPublic().and(hasParameters(matcher))).intercept(Advice.to(ModelMethodAdvice.class));
 		}
 	}
 
