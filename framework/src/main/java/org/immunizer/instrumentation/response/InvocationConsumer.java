@@ -22,7 +22,7 @@ public class InvocationConsumer {
         Properties props = new Properties();
         props.setProperty("bootstrap.servers", BOOTSTRAP_SERVERS);
         props.setProperty("group.id", GROUP_ID);
-        props.put("auto.offset.reset", "earliest"); 
+        props.put("auto.offset.reset", "latest"); 
         props.setProperty("enable.auto.commit", "true");
         props.setProperty("auto.commit.interval.ms", "1000");
         props.put("session.timeout.ms", "30000");
