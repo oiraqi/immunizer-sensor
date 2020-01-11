@@ -33,12 +33,11 @@ public class OFBizImmunizerAgent {
 						 * .or(nameStartsWith("org.apache.ofbiz.accounting.payment."))
 						 * .or(nameStartsWith("org.apache.ofbiz.accounting.util."))
 						 */
-						.or(named("org.apache.ofbiz.entity.datasource.GenericDAO"))) // enough for our effectiveness
+						/*.or(named("org.apache.ofbiz.entity.datasource.GenericDAO"))*/) // enough for our effectiveness
 																						// evaluation scenario (the
 																						// invoice update form)
 				.transform(new InterceptTransformer()).installOn(inst);
-		new AgentBuilder.Default().ignore(named("org.apache.ofbiz.entity.datasource.GenericDAO"))
-				.type(named("org.apache.ofbiz.webapp.control.ControlFilter"))
+		new AgentBuilder.Default().type(named("org.apache.ofbiz.entity.datasource.GenericDAO"))
 				.transform(new InterceptTransformer()).installOn(inst);
 		new Thread(new Runnable() {
 
