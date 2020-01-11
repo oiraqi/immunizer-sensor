@@ -40,9 +40,9 @@ public class OFBizImmunizerAgent {
 				AgentBuilder builder = new AgentBuilder.Default().ignore(nameStartsWith("net.bytebuddy."));
 				
 				/*builder.type(named("org.apache.ofbiz.webapp.control.ControlFilter"))
-					.transform(new InterceptTransformer()).installOn(inst);*/
-				builder.type(named("org.apache.ofbiz.entity.datasource.GenericDAO"))
 					.transform(new InterceptTransformer()).installOn(inst);
+				builder.type(named("org.apache.ofbiz.entity.datasource.GenericDAO"))
+					.transform(new InterceptTransformer()).installOn(inst);*/
 				
 				builder.type(nameStartsWith("org.apache.ofbiz.entity."))
 					.transform(new InterceptTransformer()).installOn(inst);
@@ -139,7 +139,7 @@ public class OFBizImmunizerAgent {
 			 * ones that carry user provided data. Other calls to the update method are
 			 * triggered by OFBiz for some system-level logging such as web stats.
 			 */
-			if (invocation.getFullyQualifiedMethodName().equals(
+			/*if (invocation.getFullyQualifiedMethodName().equals(
 					"public int org.apache.ofbiz.entity.datasource.GenericDAO.update(org.apache.ofbiz.entity.GenericEntity) throws org.apache.ofbiz.entity.GenericEntityException")) {
 				boolean relevant = false;
 				System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX");
@@ -153,7 +153,7 @@ public class OFBizImmunizerAgent {
 				// System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX");
 				if (!relevant)
 					return;
-			}
+			}*/
 			if (invocation.returns()) {
 				if (thrown != null) {
 					if (invocation.returnsNumber())
