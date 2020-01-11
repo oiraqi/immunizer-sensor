@@ -25,28 +25,32 @@ public class OFBizImmunizerAgent {
 		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 		System.out.println("Instrumenter launched!");
 		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-		new AgentBuilder.Default().ignore(nameStartsWith("net.bytebuddy."))
-				.type(named("org.apache.ofbiz.webapp.control.ControlFilter")
 						/**
 						 * //These are (re)activated for general scenarios and efficiency evaluation
 						 * nameStartsWith("org.apache.ofbiz.accounting.invoice.")
 						 * .or(nameStartsWith("org.apache.ofbiz.accounting.payment."))
 						 * .or(nameStartsWith("org.apache.ofbiz.accounting.util."))
 						 */
-						/*.or(named("org.apache.ofbiz.entity.datasource.GenericDAO"))*/) // enough for our effectiveness
+						/*.or(named("org.apache.ofbiz.entity.datasource.GenericDAO"))*/ // enough for our effectiveness
 																						// evaluation scenario (the
 																						// invoice update form)
-				.transform(new InterceptTransformer()).installOn(inst);
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
+				AgentBuilder builder = new AgentBuilder.Default().ignore(nameStartsWith("net.bytebuddy."));
+				Transformer t1 = new InterceptTransformer();
+				Transformer t2 = new InterceptTransformer();
+				builder.type(named("org.apache.ofbiz.webapp.control.ControlFilter"))
+					.transform(t1).installOn(inst);
+				builder.type(named("org.apache.ofbiz.entity.datasource.GenericDAO"))
+					.transform(t2).installOn(inst);
+				
 				InvocationConsumer consumer = new InvocationConsumer();
-				new AgentBuilder.Default().type(named("org.apache.ofbiz.entity.datasource.GenericDAO"))
-				.transform(new InterceptTransformer()).installOn(inst);
+				
 				while (true) {
 					ConsumerRecords<String, Invocation> records = consumer.poll(Duration.ofSeconds(10));
 					for (ConsumerRecord<String, Invocation> record: records) {
-						System.out.println(record.value().getStartTime());
+						System.out.println(record.value().getFullyQualifiedMethodName());
 					}
 				}
 			}
