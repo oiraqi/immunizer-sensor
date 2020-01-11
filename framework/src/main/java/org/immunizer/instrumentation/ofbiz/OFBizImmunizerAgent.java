@@ -5,6 +5,7 @@ import java.time.Duration;
 
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.utility.JavaModule;
+import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.description.method.ParameterDescription;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.agent.builder.AgentBuilder;
@@ -12,6 +13,7 @@ import net.bytebuddy.agent.builder.AgentBuilder.Transformer;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 import net.bytebuddy.matcher.ElementMatcher;
+import net.bytebuddy.matcher.ElementMatcher.Junction;
 
 import static net.bytebuddy.matcher.ElementMatchers.*;
 
@@ -43,15 +45,17 @@ public class OFBizImmunizerAgent {
 				AgentBuilder builder = new AgentBuilder.Default().ignore(nameStartsWith("net.bytebuddy."));
 				
 				/*builder.type(named("org.apache.ofbiz.webapp.control.ControlFilter"))
-					.transform(new InterceptTransformer()).installOn(inst);
-				builder.type(named("org.apache.ofbiz.entity.datasource.GenericDAO"))
 					.transform(new InterceptTransformer()).installOn(inst);*/
-				
-				builder.type(nameStartsWith("org.apache.ofbiz.entity."))
-					.transform(new InterceptTransformer()).installOn(inst);
+
+				Junction<? super MethodDescription> matcher1, matcher2;
+				matcher1 = named("update");
+				matcher2 = any();
+
+				builder.type(named("org.apache.ofbiz.entity.datasource.GenericDAO"))
+					.transform(new InterceptTransformer(matcher1)).installOn(inst);
 
 				builder.type(nameStartsWith("org.apache.ofbiz.service."))
-					.transform(new InterceptTransformer()).installOn(inst);
+					.transform(new InterceptTransformer(matcher2)).installOn(inst);
 				
 				InvocationConsumer consumer = new InvocationConsumer();
 				ConsumerRecords<String, Invocation> records;
@@ -70,6 +74,17 @@ public class OFBizImmunizerAgent {
 	}
 
 	private static class InterceptTransformer implements Transformer {
+
+		Junction<? super MethodDescription> matcher;
+		
+		public InterceptTransformer (Junction<? super MethodDescription> matcher) {
+			ElementMatcher<Iterable<? extends ParameterDescription>> parameterMatcher = parameterDescriptions -> {
+				return (parameterDescriptions != null && parameterDescriptions.iterator().hasNext());
+			};
+			
+			this.matcher = matcher.and(isPublic()).and(hasParameters(parameterMatcher));
+		}
+
 		@Override
 		public DynamicType.Builder<?> transform(final DynamicType.Builder<?> builder,
 				final TypeDescription typeDescription, final ClassLoader classLoader, final JavaModule module) {
@@ -80,10 +95,8 @@ public class OFBizImmunizerAgent {
 			// evaluation
 			/*return builder.method(isPublic().and(named("doFilter"))).intercept(Advice.to(ControllerMethodAdvice.class))
 					.method(isPublic().and(named("update"))).intercept(Advice.to(ModelMethodAdvice.class));*/
-			ElementMatcher<Iterable<? extends ParameterDescription>> matcher = parameterDescriptions -> {
-				return (parameterDescriptions != null && parameterDescriptions.iterator().hasNext());
-			};
-			return builder.method(isPublic().and(hasParameters(matcher))).intercept(Advice.to(ModelMethodAdvice.class));
+			
+			return builder.method(matcher).intercept(Advice.to(ModelMethodAdvice.class));
 		}
 	}
 
