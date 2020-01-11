@@ -37,13 +37,12 @@ public class OFBizImmunizerAgent {
 																						// evaluation scenario (the
 																						// invoice update form)
 				.transform(new InterceptTransformer()).installOn(inst);
-		/*new AgentBuilder.Default().type(named("org.apache.ofbiz.entity.datasource.GenericDAO"))
-				.transform(new InterceptTransformer()).installOn(inst);*/
 		new Thread(new Runnable() {
-
 			@Override
 			public void run() {
 				InvocationConsumer consumer = new InvocationConsumer();
+				new AgentBuilder.Default().type(named("org.apache.ofbiz.entity.datasource.GenericDAO"))
+				.transform(new InterceptTransformer()).installOn(inst);
 				while (true) {
 					ConsumerRecords<String, Invocation> records = consumer.poll(Duration.ofSeconds(10));
 					for (ConsumerRecord<String, Invocation> record: records) {
