@@ -71,7 +71,7 @@ public class OFBizImmunizerAgent {
 			/*return builder.method(isPublic().and(named("doFilter"))).intercept(Advice.to(ControllerMethodAdvice.class))
 					.method(isPublic().and(named("update"))).intercept(Advice.to(ModelMethodAdvice.class));*/
 			
-			return builder.method(isPublic()).intercept(Advice.to(ModelMethodAdvice.class));
+			return builder.method(isPublic().and(named("update"))).intercept(Advice.to(ModelMethodAdvice.class));
 		}
 	}
 
