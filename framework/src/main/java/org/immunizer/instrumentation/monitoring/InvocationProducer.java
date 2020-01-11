@@ -31,6 +31,10 @@ public class InvocationProducer {
     }
 
     public void send(Invocation invocation) {
-        producer.send(new ProducerRecord<String, Invocation>(TOPIC, invocation));
+        try{
+            producer.send(new ProducerRecord<String, Invocation>(TOPIC, invocation));
+        } catch(Throwable th) {
+            System.out.println("Throwable caught!");
+        }
     }
 }
