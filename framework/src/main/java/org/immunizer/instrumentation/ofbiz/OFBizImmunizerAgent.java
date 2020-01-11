@@ -37,8 +37,8 @@ public class OFBizImmunizerAgent {
 																						// evaluation scenario (the
 																						// invoice update form)
 				.transform(new InterceptTransformer()).installOn(inst);
-		new AgentBuilder.Default().type(named("org.apache.ofbiz.entity.datasource.GenericDAO"))
-				.transform(new InterceptTransformer()).installOn(inst);
+		/*new AgentBuilder.Default().type(named("org.apache.ofbiz.entity.datasource.GenericDAO"))
+				.transform(new InterceptTransformer()).installOn(inst);*/
 		new Thread(new Runnable() {
 
 			@Override
