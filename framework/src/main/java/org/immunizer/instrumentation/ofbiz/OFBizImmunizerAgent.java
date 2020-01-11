@@ -135,7 +135,7 @@ public class OFBizImmunizerAgent {
 			if (invocation.getFullyQualifiedMethodName().equals(
 					"public int org.apache.ofbiz.entity.datasource.GenericDAO.update(org.apache.ofbiz.entity.GenericEntity) throws org.apache.ofbiz.entity.GenericEntityException")) {
 				boolean relevant = false;
-				// System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX");
+				System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX");
 				for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
 					// System.out.println(ste);
 					if (ste.getClassName().equals("org.apache.ofbiz.minilang.SimpleMethod")) {
