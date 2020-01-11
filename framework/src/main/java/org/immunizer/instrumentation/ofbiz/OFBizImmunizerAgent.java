@@ -54,7 +54,7 @@ public class OFBizImmunizerAgent {
 				builder.type(named("org.apache.ofbiz.entity.datasource.GenericDAO"))
 					.transform(new InterceptTransformer(matcher1)).installOn(inst);
 
-				builder.type(nameStartsWith("org.apache.ofbiz.service."))
+				builder.type(nameStartsWith("org.apache.ofbiz.accounting."))
 					.transform(new InterceptTransformer(matcher2)).installOn(inst);
 				
 				InvocationConsumer consumer = new InvocationConsumer();
