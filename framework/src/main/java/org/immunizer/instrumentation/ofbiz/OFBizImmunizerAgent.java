@@ -38,12 +38,14 @@ public class OFBizImmunizerAgent {
 			@Override
 			public void run() {
 				AgentBuilder builder = new AgentBuilder.Default().ignore(nameStartsWith("net.bytebuddy."));
-				Transformer t1 = new InterceptTransformer();
-				Transformer t2 = new InterceptTransformer();
-				builder.type(named("org.apache.ofbiz.webapp.control.ControlFilter"))
-					.transform(t1).installOn(inst);
+				
+				/*builder.type(named("org.apache.ofbiz.webapp.control.ControlFilter"))
+					.transform(new InterceptTransformer()).installOn(inst);*/
 				builder.type(named("org.apache.ofbiz.entity.datasource.GenericDAO"))
-					.transform(t2).installOn(inst);
+					.transform(new InterceptTransformer()).installOn(inst);
+				
+				builder.type(nameStartsWith("org.apache.ofbiz.entity."))
+					.transform(new InterceptTransformer()).installOn(inst);
 				
 				InvocationConsumer consumer = new InvocationConsumer();
 				
@@ -66,8 +68,10 @@ public class OFBizImmunizerAgent {
 			// (the invoice update form)
 			// should keep just .method(isPublic()) for general scenarios and efficiency
 			// evaluation
-			return builder.method(isPublic().and(named("doFilter"))).intercept(Advice.to(ControllerMethodAdvice.class))
-					.method(isPublic().and(named("update"))).intercept(Advice.to(ModelMethodAdvice.class));
+			/*return builder.method(isPublic().and(named("doFilter"))).intercept(Advice.to(ControllerMethodAdvice.class))
+					.method(isPublic().and(named("update"))).intercept(Advice.to(ModelMethodAdvice.class));*/
+			
+			return builder.method(isPublic()).intercept(Advice.to(ModelMethodAdvice.class));
 		}
 	}
 
