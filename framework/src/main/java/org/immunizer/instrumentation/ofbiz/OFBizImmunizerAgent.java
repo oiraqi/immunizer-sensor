@@ -54,11 +54,15 @@ public class OFBizImmunizerAgent {
 					.transform(new InterceptTransformer()).installOn(inst);
 				
 				InvocationConsumer consumer = new InvocationConsumer();
-				
+				ConsumerRecords<String, Invocation> records;
+				int i;
 				while (true) {
-					ConsumerRecords<String, Invocation> records = consumer.poll(Duration.ofSeconds(10));
+					records = consumer.poll(Duration.ofSeconds(60));
+					i = 0;
 					for (ConsumerRecord<String, Invocation> record: records) {
 						System.out.println(record.value().getFullyQualifiedMethodName());
+						if (i++ == 10)
+							break;
 					}
 				}
 			}
