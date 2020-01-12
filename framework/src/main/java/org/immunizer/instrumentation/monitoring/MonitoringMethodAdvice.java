@@ -3,7 +3,7 @@ package org.immunizer.instrumentation.monitoring;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
-public class MonitoredMethodAdvice {
+public class MonitoringMethodAdvice {
 
     public static InvocationProducer producer = InvocationProducer.getSingleton();
 

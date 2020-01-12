@@ -33,7 +33,7 @@ public class MonitoringAgent {
 				builder = builder.ignore(nameStartsWith(ignore + '.'));
 			}
 			for (String pkg : config.apply.packages) {
-				builder.type(nameStartsWith(pkg + '.')).transform(new MonitoredMethodTransformer(any())).installOn(inst);
+				builder.type(nameStartsWith(pkg + '.')).transform(new MonitoringMethodTransformer(any())).installOn(inst);
 			}
 			for (Config.Apply.Class clazz : config.apply.classes) {
 				Junction<? super MethodDescription> any = any(), matcher = any;
@@ -48,7 +48,7 @@ public class MonitoringAgent {
 						matcher = matcher.or(mtc);
 					}
 				}
-				builder.type(named(clazz.name)).transform(new MonitoredMethodTransformer(matcher)).installOn(inst);
+				builder.type(named(clazz.name)).transform(new MonitoringMethodTransformer(matcher)).installOn(inst);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
