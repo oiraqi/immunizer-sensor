@@ -4,16 +4,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.lang.instrument.Instrumentation;
 
-import net.bytebuddy.dynamic.DynamicType;
-import net.bytebuddy.utility.JavaModule;
 import net.bytebuddy.description.method.MethodDescription;
-import net.bytebuddy.description.method.ParameterDescription;
-import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.agent.builder.AgentBuilder;
-import net.bytebuddy.agent.builder.AgentBuilder.Transformer;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
-import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.matcher.ElementMatcher.Junction;
 
 import static net.bytebuddy.matcher.ElementMatchers.*;
@@ -88,27 +82,7 @@ public class MonitoringAgent {
 			}
 		}
 	}
-
-	private static class MonitoringTransformer implements Transformer {
-
-		Junction<? super MethodDescription> matcher;
-
-		public MonitoringTransformer(Junction<? super MethodDescription> matcher) {
-			ElementMatcher<Iterable<? extends ParameterDescription>> parameterMatcher = parameterDescriptions -> {
-				return (parameterDescriptions != null && parameterDescriptions.iterator().hasNext());
-			};
-
-			this.matcher = matcher.and(isPublic()).and(hasParameters(parameterMatcher));
-		}
-
-		@Override
-		public DynamicType.Builder<?> transform(final DynamicType.Builder<?> builder,
-				final TypeDescription typeDescription, final ClassLoader classLoader, final JavaModule module) {
-
-			return builder.method(matcher).intercept(Advice.to(MonitoringAdvice.class));
-		}
-	}
-
+	
 	public static class ControllerMethodAdvice {
 
 		@Advice.OnMethodEnter
