@@ -2,11 +2,11 @@
 FROM ubuntu:18.04
 
 # author
-MAINTAINER Omar Iraqi
+LABEL maintainer="Omar Iraqi"
 
 # extra metadata
 LABEL version="1.0"
-LABEL description="Docker Image for Ubuntu, OpenJDK 8, Apache OFBiz and Immune Apps Framework"
+LABEL description="Docker Image for Ubuntu, OpenJDK 8, Apache OFBiz and Immunizer Monitoring and Response Microagents"
 
 # update sources list
 RUN apt-get clean
@@ -25,9 +25,16 @@ WORKDIR /root/ofbiz-framework
 RUN ./gradlew cleanAll loadAll --info
 RUN ./gradlew jar
 WORKDIR /root
-RUN git clone --progress --verbose https://github.com/oiraqi/immune-apps.git
-WORKDIR /root/immune-apps/framework
-RUN ./gradlew agentLibs
+RUN git clone --progress --verbose https://github.com/oiraqi/immunizer-monitoring.git
+RUN git clone --progress --verbose https://github.com/oiraqi/immunizer-response.git
+WORKDIR /root/immunizer-monitoring/scripts
+RUN chmod +x build.sh
+RUN chmod +x ofbiz-immunized.sh
+RUN ./build.sh
+WORKDIR /root/immunizer-response/scripts
+RUN chmod +x build.sh
+RUN chmod +x ofbiz-immunized.sh
+RUN ./build.sh
 WORKDIR /root
 
 # cleanup
