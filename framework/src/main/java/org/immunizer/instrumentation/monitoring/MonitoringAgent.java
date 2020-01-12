@@ -1,9 +1,8 @@
-package org.immunizer.instrumentation;
+package org.immunizer.instrumentation.monitoring;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.lang.instrument.Instrumentation;
-import java.time.Duration;
 
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.utility.JavaModule;
@@ -21,19 +20,12 @@ import static net.bytebuddy.matcher.ElementMatchers.*;
 
 import java.util.Random;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-
 import com.google.gson.Gson;
 
-import org.immunizer.instrumentation.Invocation;
-import org.immunizer.instrumentation.monitoring.InvocationProducer;
-import org.immunizer.instrumentation.response.InvocationConsumer;
-
-public class ImmunizerAgent {
+public class MonitoringAgent {
 	public static void premain(String arg, Instrumentation inst) throws Exception {
 		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-		System.out.println("Instrumenter MicroAgent Launched!");
+		System.out.println("Monitoring Microagent Launched!");
 		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 		AgentBuilder builder = new AgentBuilder.Default().ignore(nameStartsWith("net.bytebuddy."));
 
@@ -75,24 +67,6 @@ public class ImmunizerAgent {
 			}
 		} catch (Exception ex) {
 		}
-
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				InvocationConsumer consumer = new InvocationConsumer();
-				ConsumerRecords<String, Invocation> records;
-				int i;
-				while (true) {
-					records = consumer.poll(Duration.ofSeconds(60));
-					i = 0;
-					for (ConsumerRecord<String, Invocation> record : records) {
-						System.out.println(record.value().getFullyQualifiedMethodName());
-						if (i++ == 10)
-							break;
-					}
-				}
-			}
-		}).start();
 	}
 
 	public static class Config {
@@ -130,17 +104,6 @@ public class ImmunizerAgent {
 		@Override
 		public DynamicType.Builder<?> transform(final DynamicType.Builder<?> builder,
 				final TypeDescription typeDescription, final ClassLoader classLoader, final JavaModule module) {
-
-			// .and(named("update")) is enough for our effectiveness evaluation scenario
-			// (the invoice update form)
-			// should keep just .method(isPublic()) for general scenarios and efficiency
-			// evaluation
-			/*
-			 * return builder.method(isPublic().and(named("doFilter"))).intercept(Advice.to(
-			 * ControllerMethodAdvice.class))
-			 * .method(isPublic().and(named("update"))).intercept(Advice.to(
-			 * ModelMethodAdvice.class));
-			 */
 
 			return builder.method(matcher).intercept(Advice.to(MonitoringAdvice.class));
 		}

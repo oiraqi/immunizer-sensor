@@ -1,4 +1,4 @@
-package org.immunizer.instrumentation;
+package org.immunizer.instrumentation.monitoring;
 
 import com.google.common.hash.Hashing;
 
