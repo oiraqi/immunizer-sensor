@@ -28,16 +28,7 @@ public class MonitoringAgent {
 		 * .transform(new InterceptTransformer()).installOn(inst);
 		 */
 		try {
-			String configPath = System.getProperty("config");
-			BufferedReader br = new BufferedReader(new FileReader(configPath));
-			String line = null;
-			StringBuffer buffer = new StringBuffer();
-			while ((line = br.readLine()) != null)
-				buffer.append(line);
-			br.close();
-
-			Gson gson = new Gson();
-			Config config = gson.fromJson(new String(buffer), Config.class);
+			Config config = getConfig();
 			for (String ignore : config.ignore) {
 				builder = builder.ignore(nameStartsWith(ignore + '.'));
 			}
@@ -63,7 +54,20 @@ public class MonitoringAgent {
 		}
 	}
 
-	public static class Config {
+	public static Config getConfig() throws Exception {
+		String configPath = System.getProperty("config");
+		BufferedReader br = new BufferedReader(new FileReader(configPath));
+		String line = null;
+		StringBuffer buffer = new StringBuffer();
+		while ((line = br.readLine()) != null)
+			buffer.append(line);
+		br.close();
+
+		Gson gson = new Gson();
+		return gson.fromJson(new String(buffer), Config.class);
+	}
+
+	private static class Config {
 		public String[] ignore = {};
 		public Apply apply;
 
@@ -82,7 +86,7 @@ public class MonitoringAgent {
 			}
 		}
 	}
-	
+
 	public static class ControllerMethodAdvice {
 
 		@Advice.OnMethodEnter

@@ -11,6 +11,8 @@ public class MonitoringAdvice {
     public static Invocation onEnter(@Advice.Origin String fullyQualifiedMethodName,
             @Advice.AllArguments Object[] params) {
 
+        System.out.println("HiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHi");
+        System.out.println(fullyQualifiedMethodName);
         return new Invocation("1.0", fullyQualifiedMethodName, params);        
     }
 
