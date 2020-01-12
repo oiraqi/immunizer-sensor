@@ -21,9 +21,7 @@
                 "methods": [
                     {
                         "name": "update",
-                        "parameters": [
-                            "org.apache.ofbiz.entity.GenericEntity"
-                        ]
+                        "parameters": 1
                     }
                 ]
             }

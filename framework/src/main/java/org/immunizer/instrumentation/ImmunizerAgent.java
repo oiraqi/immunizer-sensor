@@ -1,5 +1,7 @@
 package org.immunizer.instrumentation;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.lang.instrument.Instrumentation;
 import java.time.Duration;
 
@@ -21,6 +23,9 @@ import java.util.Random;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+
+import com.google.gson.Gson;
+
 import org.immunizer.instrumentation.Invocation;
 import org.immunizer.instrumentation.monitoring.InvocationProducer;
 import org.immunizer.instrumentation.response.InvocationConsumer;
@@ -28,42 +33,74 @@ import org.immunizer.instrumentation.response.InvocationConsumer;
 public class ImmunizerAgent {
 	public static void premain(String arg, Instrumentation inst) throws Exception {
 		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-		System.out.println("Instrumenter launched!");
+		System.out.println("Instrumenter MicroAgent Launched!");
 		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-						/**
-						 * //These are (re)activated for general scenarios and efficiency evaluation
-						 * nameStartsWith("org.apache.ofbiz.accounting.invoice.")
-						 * .or(nameStartsWith("org.apache.ofbiz.accounting.payment."))
-						 * .or(nameStartsWith("org.apache.ofbiz.accounting.util."))
-						 */
-						/*.or(named("org.apache.ofbiz.entity.datasource.GenericDAO"))*/ // enough for our effectiveness
-																						// evaluation scenario (the
-																						// invoice update form)
+		AgentBuilder builder = new AgentBuilder.Default().ignore(nameStartsWith("net.bytebuddy."));
+
+		/*
+		 * builder.type(named("org.apache.ofbiz.webapp.control.ControlFilter"))
+		 * .transform(new InterceptTransformer()).installOn(inst);
+		 */
+		try {
+			String configPath = System.getProperty("config");
+			BufferedReader br = new BufferedReader(new FileReader(configPath));
+			String line = null;
+			StringBuffer buffer = new StringBuffer();
+			while ((line = br.readLine()) != null)
+				buffer.append(line);
+			br.close();
+
+			Gson gson = new Gson();
+			Config config = gson.fromJson(new String(buffer), Config.class);
+			for (String ignore : config.ignore) {
+				builder = builder.ignore(nameStartsWith(ignore + '.'));
+			}
+			for (String pkg : config.apply.packages) {
+				builder.type(nameStartsWith(pkg + '.'))
+					.transform(new InterceptTransformer(any())).installOn(inst);
+			}
+			for (Config.Apply.Clazz clazz : config.apply.classes) {
+				Junction<? super MethodDescription> matcher = any();
+				for (Config.Apply.Clazz.Methodd method: clazz.methods) {
+					matcher = matcher.and(named(method.name));
+					if (method.parameters != 0) {
+						matcher = matcher.and(takesArguments(method.parameters));
+					}
+				}				
+				builder.type(named(clazz.name))
+					.transform(new InterceptTransformer(matcher)).installOn(inst);
+			}
+		} catch (Exception ex) {
+		}
+
+		/*Junction<? super MethodDescription> matcher1, matcher2;
+		matcher1 = named("update");
+		matcher2 = any();
+
+		builder.type(named("org.apache.ofbiz.entity.datasource.GenericDAO"))
+				.transform(new InterceptTransformer(matcher1)).installOn(inst);
+
+		builder.type(nameStartsWith("org.apache.ofbiz.accounting.")).transform(new InterceptTransformer(matcher2))
+				.installOn(inst);*/
+		/**
+		 * //These are (re)activated for general scenarios and efficiency evaluation
+		 * nameStartsWith("org.apache.ofbiz.accounting.invoice.")
+		 * .or(nameStartsWith("org.apache.ofbiz.accounting.payment."))
+		 * .or(nameStartsWith("org.apache.ofbiz.accounting.util."))
+		 */
+		/* .or(named("org.apache.ofbiz.entity.datasource.GenericDAO")) */ // enough for our effectiveness
+																			// evaluation scenario (the
+																			// invoice update form)
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				AgentBuilder builder = new AgentBuilder.Default().ignore(nameStartsWith("net.bytebuddy."));
-				
-				/*builder.type(named("org.apache.ofbiz.webapp.control.ControlFilter"))
-					.transform(new InterceptTransformer()).installOn(inst);*/
-
-				Junction<? super MethodDescription> matcher1, matcher2;
-				matcher1 = named("update");
-				matcher2 = any();
-
-				builder.type(named("org.apache.ofbiz.entity.datasource.GenericDAO"))
-					.transform(new InterceptTransformer(matcher1)).installOn(inst);
-
-				builder.type(nameStartsWith("org.apache.ofbiz.accounting."))
-					.transform(new InterceptTransformer(matcher2)).installOn(inst);
-				
 				InvocationConsumer consumer = new InvocationConsumer();
 				ConsumerRecords<String, Invocation> records;
 				int i;
 				while (true) {
 					records = consumer.poll(Duration.ofSeconds(60));
 					i = 0;
-					for (ConsumerRecord<String, Invocation> record: records) {
+					for (ConsumerRecord<String, Invocation> record : records) {
 						System.out.println(record.value().getFullyQualifiedMethodName());
 						if (i++ == 10)
 							break;
@@ -73,15 +110,35 @@ public class ImmunizerAgent {
 		}).start();
 	}
 
+	public static class Config {
+		public String[] ignore = {};
+		public Apply apply;
+
+		public static class Apply {
+			public String[] packages = {};
+			public Clazz[] classes = {};
+
+			public class Clazz {
+				public String name;
+				public Methodd[] methods = {};
+
+				public class Methodd {
+					public String name;
+					public int parameters = 0;
+				}
+			}
+		}
+	}
+
 	private static class InterceptTransformer implements Transformer {
 
 		Junction<? super MethodDescription> matcher;
-		
-		public InterceptTransformer (Junction<? super MethodDescription> matcher) {
+
+		public InterceptTransformer(Junction<? super MethodDescription> matcher) {
 			ElementMatcher<Iterable<? extends ParameterDescription>> parameterMatcher = parameterDescriptions -> {
 				return (parameterDescriptions != null && parameterDescriptions.iterator().hasNext());
 			};
-			
+
 			this.matcher = matcher.and(isPublic()).and(hasParameters(parameterMatcher));
 		}
 
@@ -93,9 +150,13 @@ public class ImmunizerAgent {
 			// (the invoice update form)
 			// should keep just .method(isPublic()) for general scenarios and efficiency
 			// evaluation
-			/*return builder.method(isPublic().and(named("doFilter"))).intercept(Advice.to(ControllerMethodAdvice.class))
-					.method(isPublic().and(named("update"))).intercept(Advice.to(ModelMethodAdvice.class));*/
-			
+			/*
+			 * return builder.method(isPublic().and(named("doFilter"))).intercept(Advice.to(
+			 * ControllerMethodAdvice.class))
+			 * .method(isPublic().and(named("update"))).intercept(Advice.to(
+			 * ModelMethodAdvice.class));
+			 */
+
 			return builder.method(matcher).intercept(Advice.to(ModelMethodAdvice.class));
 		}
 	}
@@ -164,21 +225,16 @@ public class ImmunizerAgent {
 			 * ones that carry user provided data. Other calls to the update method are
 			 * triggered by OFBiz for some system-level logging such as web stats.
 			 */
-			/*if (invocation.getFullyQualifiedMethodName().equals(
-					"public int org.apache.ofbiz.entity.datasource.GenericDAO.update(org.apache.ofbiz.entity.GenericEntity) throws org.apache.ofbiz.entity.GenericEntityException")) {
-				boolean relevant = false;
-				System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX");
-				for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
-					// System.out.println(ste);
-					if (ste.getClassName().equals("org.apache.ofbiz.minilang.SimpleMethod")) {
-						relevant = true;
-						break;
-					}
-				}
-				// System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX");
-				if (!relevant)
-					return;
-			}*/
+			/*
+			 * if (invocation.getFullyQualifiedMethodName().equals(
+			 * "public int org.apache.ofbiz.entity.datasource.GenericDAO.update(org.apache.ofbiz.entity.GenericEntity) throws org.apache.ofbiz.entity.GenericEntityException"
+			 * )) { boolean relevant = false;
+			 * System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX"); for (StackTraceElement ste :
+			 * Thread.currentThread().getStackTrace()) { // System.out.println(ste); if
+			 * (ste.getClassName().equals("org.apache.ofbiz.minilang.SimpleMethod")) {
+			 * relevant = true; break; } } //
+			 * System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX"); if (!relevant) return; }
+			 */
 			if (invocation.returns()) {
 				if (thrown != null) {
 					if (invocation.returnsNumber())
