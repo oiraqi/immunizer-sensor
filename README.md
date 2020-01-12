@@ -3,9 +3,9 @@
 This is the Java implementation of the instrumentation microagent of [Immunizer: The Collaborative Cloud-based Unsupervised Software Immunity Framework](https://github.com/oiraqi/immunizer)
 
 ## Siblings
-- [Acquisition Microservice of Immunizer](https://github.com/oiraqi/immunizer-acquisition)
-- [Analysis Microservice of Immunizer](https://github.com/oiraqi/immunizer-analysis)
-- [Collaboration Microservice of Immunizer](https://github.com/oiraqi/immunizer-collaboration)
+- [Acquisition Microservice](https://github.com/oiraqi/immunizer-acquisition)
+- [Analysis Microservice](https://github.com/oiraqi/immunizer-analysis)
+- [Collaboration Microservice](https://github.com/oiraqi/immunizer-collaboration)
 
 ## Dependencies
 
