@@ -59,13 +59,13 @@ public class ImmunizerAgent {
 				builder.type(nameStartsWith(pkg + '.')).transform(new MonitoringTransformer(any())).installOn(inst);
 			}
 			for (Config.Apply.Class clazz : config.apply.classes) {
-				Junction<? super MethodDescription> matcher = any();
+				Junction<? super MethodDescription> any = any(), matcher = any;
 				for (Config.Apply.Class.Method method : clazz.methods) {
 					Junction<? super MethodDescription> mtc = named(method.name);
 					if (method.parameters != 0) {
 						mtc = mtc.and(takesArguments(method.parameters));
 					}
-					if (matcher == any()) {
+					if (matcher == any) {
 						matcher = matcher.and(mtc);
 					} else {
 						matcher = matcher.or(mtc);

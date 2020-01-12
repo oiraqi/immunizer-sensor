@@ -1,6 +1,6 @@
-# Instrumentation MicroAgent of Immunizer
+# Instrumentation Microagent
 
-This is the Java implementation of the instrumentation microagent of [Immunizer: The Collaborative Cloud-based Unsupervised Software Immunity Framework](https://github.com/oiraqi/immunizer)
+This is the Java implementation of the Instrumentation Microagent of [Immunizer: The Collaborative Cloud-based Unsupervised Software Immunity Framework](https://github.com/oiraqi/immunizer)
 
 ## Siblings
 - [Acquisition Microservice](https://github.com/oiraqi/immunizer-acquisition)
