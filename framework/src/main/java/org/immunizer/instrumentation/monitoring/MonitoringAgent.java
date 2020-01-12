@@ -51,6 +51,7 @@ public class MonitoringAgent {
 				builder.type(named(clazz.name)).transform(new MonitoredMethodTransformer(matcher)).installOn(inst);
 			}
 		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 
