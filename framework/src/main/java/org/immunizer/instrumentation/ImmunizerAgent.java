@@ -1,4 +1,4 @@
-package org.immunizer.instrumentation.ofbiz;
+package org.immunizer.instrumentation;
 
 import java.lang.instrument.Instrumentation;
 import java.time.Duration;
@@ -25,7 +25,7 @@ import org.immunizer.instrumentation.Invocation;
 import org.immunizer.instrumentation.monitoring.InvocationProducer;
 import org.immunizer.instrumentation.response.InvocationConsumer;
 
-public class OFBizImmunizerAgent {
+public class ImmunizerAgent {
 	public static void premain(String arg, Instrumentation inst) throws Exception {
 		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 		System.out.println("Instrumenter launched!");
