@@ -3,7 +3,7 @@ package org.immunizer.instrumentation.monitoring;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
-public class MonitoringAdvice {
+public class MonitoredMethodAdvice {
 
     public static InvocationProducer producer = InvocationProducer.getSingleton();
 
@@ -11,8 +11,6 @@ public class MonitoringAdvice {
     public static Invocation onEnter(@Advice.Origin String fullyQualifiedMethodName,
             @Advice.AllArguments Object[] params) {
 
-        System.out.println("HiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHi");
-        System.out.println(fullyQualifiedMethodName);
         return new Invocation("1.0", fullyQualifiedMethodName, params);        
     }
 
