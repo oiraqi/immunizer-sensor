@@ -6,6 +6,8 @@ import java.lang.instrument.Instrumentation;
 
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.agent.builder.AgentBuilder;
+import net.bytebuddy.agent.builder.AgentBuilder.Identified.Extendable;
+import net.bytebuddy.agent.builder.AgentBuilder.Identified.Narrowable;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 import net.bytebuddy.matcher.ElementMatcher.Junction;
@@ -32,8 +34,17 @@ public class MonitoringAgent {
 			for (String ignore : config.ignore) {
 				builder = builder.ignore(nameStartsWith(ignore + '.'));
 			}
-			for (String pkg : config.apply.packages) {
-				builder.type(nameStartsWith(pkg + '.')).transform(new MonitoringMethodTransformer(any())).installOn(inst);
+			Extendable extendable = null;
+			Narrowable narrowable = null;
+			for (String pkg : config.apply.packages) {				
+				if (narrowable == null) {
+					narrowable = builder.type(nameStartsWith(pkg + '.'));
+				} else {
+					narrowable = narrowable.or(nameStartsWith(pkg + '.'));
+				}				
+			}
+			if (narrowable != null) {
+				extendable = narrowable.transform(new MonitoringMethodTransformer(any()));
 			}
 			for (Config.Apply.Class clazz : config.apply.classes) {
 				Junction<? super MethodDescription> any = any(), matcher = any;
@@ -48,7 +59,14 @@ public class MonitoringAgent {
 						matcher = matcher.or(mtc);
 					}
 				}
-				builder.type(named(clazz.name)).transform(new MonitoringMethodTransformer(matcher)).installOn(inst);
+				if (extendable == null) {
+					extendable = builder.type(named(clazz.name)).transform(new MonitoringMethodTransformer(matcher));
+				} else {
+					extendable = extendable.type(named(clazz.name)).transform(new MonitoringMethodTransformer(matcher));
+				}
+			}
+			if (extendable != null) {
+				extendable.installOn(inst);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
