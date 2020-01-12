@@ -56,41 +56,26 @@ public class ImmunizerAgent {
 				builder = builder.ignore(nameStartsWith(ignore + '.'));
 			}
 			for (String pkg : config.apply.packages) {
-				builder.type(nameStartsWith(pkg + '.'))
-					.transform(new InterceptTransformer(any())).installOn(inst);
+				builder.type(nameStartsWith(pkg + '.')).transform(new MonitoringTransformer(any())).installOn(inst);
 			}
-			for (Config.Apply.Clazz clazz : config.apply.classes) {
+			for (Config.Apply.Class clazz : config.apply.classes) {
 				Junction<? super MethodDescription> matcher = any();
-				for (Config.Apply.Clazz.Methodd method: clazz.methods) {
-					matcher = matcher.and(named(method.name));
+				for (Config.Apply.Class.Method method : clazz.methods) {
+					Junction<? super MethodDescription> mtc = named(method.name);
 					if (method.parameters != 0) {
-						matcher = matcher.and(takesArguments(method.parameters));
+						mtc = mtc.and(takesArguments(method.parameters));
 					}
-				}				
-				builder.type(named(clazz.name))
-					.transform(new InterceptTransformer(matcher)).installOn(inst);
+					if (matcher == any()) {
+						matcher = matcher.and(mtc);
+					} else {
+						matcher = matcher.or(mtc);
+					}
+				}
+				builder.type(named(clazz.name)).transform(new MonitoringTransformer(matcher)).installOn(inst);
 			}
 		} catch (Exception ex) {
 		}
 
-		/*Junction<? super MethodDescription> matcher1, matcher2;
-		matcher1 = named("update");
-		matcher2 = any();
-
-		builder.type(named("org.apache.ofbiz.entity.datasource.GenericDAO"))
-				.transform(new InterceptTransformer(matcher1)).installOn(inst);
-
-		builder.type(nameStartsWith("org.apache.ofbiz.accounting.")).transform(new InterceptTransformer(matcher2))
-				.installOn(inst);*/
-		/**
-		 * //These are (re)activated for general scenarios and efficiency evaluation
-		 * nameStartsWith("org.apache.ofbiz.accounting.invoice.")
-		 * .or(nameStartsWith("org.apache.ofbiz.accounting.payment."))
-		 * .or(nameStartsWith("org.apache.ofbiz.accounting.util."))
-		 */
-		/* .or(named("org.apache.ofbiz.entity.datasource.GenericDAO")) */ // enough for our effectiveness
-																			// evaluation scenario (the
-																			// invoice update form)
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -116,13 +101,13 @@ public class ImmunizerAgent {
 
 		public static class Apply {
 			public String[] packages = {};
-			public Clazz[] classes = {};
+			public Class[] classes = {};
 
-			public class Clazz {
+			public class Class {
 				public String name;
-				public Methodd[] methods = {};
+				public Method[] methods = {};
 
-				public class Methodd {
+				public class Method {
 					public String name;
 					public int parameters = 0;
 				}
@@ -130,11 +115,11 @@ public class ImmunizerAgent {
 		}
 	}
 
-	private static class InterceptTransformer implements Transformer {
+	private static class MonitoringTransformer implements Transformer {
 
 		Junction<? super MethodDescription> matcher;
 
-		public InterceptTransformer(Junction<? super MethodDescription> matcher) {
+		public MonitoringTransformer(Junction<? super MethodDescription> matcher) {
 			ElementMatcher<Iterable<? extends ParameterDescription>> parameterMatcher = parameterDescriptions -> {
 				return (parameterDescriptions != null && parameterDescriptions.iterator().hasNext());
 			};
@@ -157,7 +142,7 @@ public class ImmunizerAgent {
 			 * ModelMethodAdvice.class));
 			 */
 
-			return builder.method(matcher).intercept(Advice.to(ModelMethodAdvice.class));
+			return builder.method(matcher).intercept(Advice.to(MonitoringAdvice.class));
 		}
 	}
 
@@ -204,7 +189,7 @@ public class ImmunizerAgent {
 		}
 	}
 
-	public static class ModelMethodAdvice {
+	public static class MonitoringAdvice {
 
 		public static InvocationProducer producer = InvocationProducer.getSingleton();
 
@@ -218,23 +203,7 @@ public class ImmunizerAgent {
 		@Advice.OnMethodExit(onThrowable = Throwable.class)
 		public static void onExit(@Advice.Enter Invocation invocation,
 				@Advice.Return(typing = Assigner.Typing.DYNAMIC) Object result, @Advice.Thrown Throwable thrown) {
-
-			/**
-			 * Only intercept relevant calls to
-			 * org.apache.ofbiz.entity.datasource.GenericDAO.update Relevant calls are the
-			 * ones that carry user provided data. Other calls to the update method are
-			 * triggered by OFBiz for some system-level logging such as web stats.
-			 */
-			/*
-			 * if (invocation.getFullyQualifiedMethodName().equals(
-			 * "public int org.apache.ofbiz.entity.datasource.GenericDAO.update(org.apache.ofbiz.entity.GenericEntity) throws org.apache.ofbiz.entity.GenericEntityException"
-			 * )) { boolean relevant = false;
-			 * System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX"); for (StackTraceElement ste :
-			 * Thread.currentThread().getStackTrace()) { // System.out.println(ste); if
-			 * (ste.getClassName().equals("org.apache.ofbiz.minilang.SimpleMethod")) {
-			 * relevant = true; break; } } //
-			 * System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX"); if (!relevant) return; }
-			 */
+			
 			if (invocation.returns()) {
 				if (thrown != null) {
 					if (invocation.returnsNumber())
