@@ -11,7 +11,7 @@ public class MonitoringMethodAdvice {
     public static Invocation onEnter(@Advice.Origin String fullyQualifiedMethodName,
             @Advice.AllArguments Object[] params) {
         
-        return new Invocation("1.0", fullyQualifiedMethodName, params);        
+        return new Invocation("1.0", fullyQualifiedMethodName, params);
     }
 
     @Advice.OnMethodExit(onThrowable = Throwable.class)

@@ -20,11 +20,6 @@ RUN apt-get install -qy vim
 RUN apt-get install -qy zip unzip
 RUN apt-get install -qy git
 WORKDIR /root
-RUN git clone --progress --verbose https://github.com/apache/ofbiz-framework.git
-WORKDIR /root/ofbiz-framework
-RUN ./gradlew cleanAll loadAll --info
-RUN ./gradlew jar
-WORKDIR /root
 RUN git clone --progress --verbose https://github.com/oiraqi/immunizer-monitoring.git
 RUN git clone --progress --verbose https://github.com/oiraqi/immunizer-response.git
 WORKDIR /root/immunizer-monitoring/scripts
@@ -43,5 +38,3 @@ RUN apt-get -qy autoremove
 # locales to UTF-8
 RUN locale-gen "en_US.UTF-8" && /usr/sbin/update-locale LANG=en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
-EXPOSE 8080:8080
-EXPOSE 8443:8443
