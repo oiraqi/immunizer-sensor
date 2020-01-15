@@ -23,13 +23,14 @@ WORKDIR /root
 RUN git clone --progress --verbose https://github.com/oiraqi/immunizer-monitoring.git
 RUN git clone --progress --verbose https://github.com/oiraqi/immunizer-response.git
 WORKDIR /root/immunizer-monitoring/scripts
-RUN chmod +x build.sh
-RUN chmod +x ofbiz-immunized.sh
 RUN ./build.sh
 WORKDIR /root/immunizer-response/scripts
-RUN chmod +x build.sh
-RUN chmod +x ofbiz-immunized.sh
 RUN ./build.sh
+WORKDIR /root
+RUN git clone --progress --verbose https://github.com/apache/ofbiz-framework.git
+WORKDIR /root/ofbiz-framework
+RUN ./gradlew cleanAll loadAll --info
+RUN ./gradlew jar
 WORKDIR /root
 
 # cleanup
