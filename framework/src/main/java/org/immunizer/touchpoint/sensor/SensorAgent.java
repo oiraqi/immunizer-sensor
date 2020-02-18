@@ -1,4 +1,4 @@
-package org.immunizer.instrumentation.monitoring;
+package org.immunizer.touchpoint.sensor;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -18,7 +18,7 @@ import java.util.Random;
 
 import com.google.gson.Gson;
 
-public class MonitoringAgent {
+public class SensorAgent {
 	public static void premain(String arg, Instrumentation inst) throws Exception {
 		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 		System.out.println("Monitoring Microagent Launched!");
@@ -44,7 +44,7 @@ public class MonitoringAgent {
 				}				
 			}
 			if (narrowable != null) {
-				extendable = narrowable.transform(new MonitoringMethodTransformer(any()));
+				extendable = narrowable.transform(new SensorMethodTransformer(any()));
 			}
 			for (Config.Apply.Class clazz : config.apply.classes) {
 				Junction<? super MethodDescription> any = any(), matcher = any;
@@ -60,9 +60,9 @@ public class MonitoringAgent {
 					}
 				}
 				if (extendable == null) {
-					extendable = builder.type(named(clazz.name)).transform(new MonitoringMethodTransformer(matcher));
+					extendable = builder.type(named(clazz.name)).transform(new SensorMethodTransformer(matcher));
 				} else {
-					extendable = extendable.type(named(clazz.name)).transform(new MonitoringMethodTransformer(matcher));
+					extendable = extendable.type(named(clazz.name)).transform(new SensorMethodTransformer(matcher));
 				}
 			}
 			if (extendable != null) {

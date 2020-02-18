@@ -1,4 +1,4 @@
-package org.immunizer.instrumentation.monitoring;
+package org.immunizer.touchpoint.sensor;
 
 import com.google.common.hash.Hashing;
 

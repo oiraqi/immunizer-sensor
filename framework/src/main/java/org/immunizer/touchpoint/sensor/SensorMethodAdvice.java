@@ -1,9 +1,9 @@
-package org.immunizer.instrumentation.monitoring;
+package org.immunizer.touchpoint.sensor;
 
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
-public class MonitoringMethodAdvice {
+public class SensorMethodAdvice {
 
     public static InvocationProducer producer = InvocationProducer.getSingleton();
 

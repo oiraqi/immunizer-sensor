@@ -1,4 +1,4 @@
-package org.immunizer.instrumentation.monitoring;
+package org.immunizer.touchpoint.sensor;
 
 import java.util.Properties;
 
