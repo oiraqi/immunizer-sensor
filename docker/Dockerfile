@@ -20,11 +20,11 @@ RUN apt-get install -qy vim
 RUN apt-get install -qy zip unzip
 RUN apt-get install -qy git
 WORKDIR /root
-RUN git clone --progress --verbose https://github.com/oiraqi/immunizer-monitoring.git
-RUN git clone --progress --verbose https://github.com/oiraqi/immunizer-response.git
-WORKDIR /root/immunizer-monitoring/scripts
+RUN git clone --progress --verbose https://github.com/oiraqi/immunizer-sensor.git
+RUN git clone --progress --verbose https://github.com/oiraqi/immunizer-effector.git
+WORKDIR /root/immunizer-sensor/scripts
 RUN ./build.sh
-WORKDIR /root/immunizer-response/scripts
+WORKDIR /root/immunizer-effector/scripts
 RUN ./build.sh
 WORKDIR /root
 RUN git clone --progress --verbose https://github.com/apache/ofbiz-framework.git
