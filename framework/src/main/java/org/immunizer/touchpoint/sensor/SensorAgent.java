@@ -21,7 +21,7 @@ import com.google.gson.Gson;
 public class SensorAgent {
 	public static void premain(String arg, Instrumentation inst) throws Exception {
 		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-		System.out.println("Monitoring Microagent Launched!");
+		System.out.println("Sensor Microagent Launched!");
 		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 		AgentBuilder builder = new AgentBuilder.Default().ignore(nameStartsWith("net.bytebuddy."));
 
