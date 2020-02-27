@@ -1,6 +1,6 @@
-# Monitoring Microagent
+# Sensor Microagent
 
-This is the Java implementation of the Monitoring Microagent of [Immunizer: The Collaborative Cloud-based Unsupervised Software Immunity Framework](https://github.com/oiraqi/immunizer)
+This is the Java implementation of the Sensor Microagent of [Immunizer: The Collaborative Cloud-based Unsupervised Software Immunity Framework](https://github.com/oiraqi/immunizer)
 
 ## Siblings
 ### Autonomic Protection Microagents
