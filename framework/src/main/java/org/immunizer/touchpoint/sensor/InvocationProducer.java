@@ -17,7 +17,7 @@ public class InvocationProducer {
         props.put("bootstrap.servers", BOOTSTRAP_SERVERS);
         props.put("acks", "all");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.immunizer.instrumentation.monitoring.InvocationSerializer");
+        props.put("value.serializer", "org.immunizer.touchpoint.sensor.InvocationSerializer");
         producer = new KafkaProducer<String, Invocation>(props);
     }
 
