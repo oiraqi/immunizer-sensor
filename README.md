@@ -33,7 +33,7 @@ All dependencies are managed through Docker and Gradle. Docker is all what you n
 
 ## How To
 - Make sure you have Docker installed
-- docker build -t immunizer-microagents:1.0 https://github.com/oiraqi/immunizer-sensor/blob/master/docker/Dockerfile
+- docker build -t immunizer-microagents:1.0 https://raw.githubusercontent.com/oiraqi/immunizer-sensor/master/docker/Dockerfile
 - docker run --name immunizer-microagents-container -p 8443:8443 -it immunizer-microagents:1.0
 - cd immunizer-monitoring/scripts
 - ./ofbiz-immunized.sh
