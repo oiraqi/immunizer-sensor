@@ -6,7 +6,7 @@ LABEL maintainer="Omar Iraqi"
 
 # extra metadata
 LABEL version="1.0"
-LABEL description="Docker Image for Ubuntu, OpenJDK 8, Apache OFBiz and Immunizer Monitoring and Response Microagents"
+LABEL description="Docker Image for Ubuntu, OpenJDK 8, Apache OFBiz and Immunizer Sensor and Effector Microagents"
 
 # update sources list
 RUN apt-get clean
