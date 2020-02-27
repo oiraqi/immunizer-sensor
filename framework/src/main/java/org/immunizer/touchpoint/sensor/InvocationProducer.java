@@ -10,7 +10,7 @@ public class InvocationProducer {
     private static InvocationProducer singleton;
     private KafkaProducer<String, Invocation> producer;
     private static final String BOOTSTRAP_SERVERS = "kafka:9092";
-    private static final String TOPIC = "Invocations";
+    private static final String BASE_TOPIC = "Invocations_";
 
     private InvocationProducer() {
         Properties props = new Properties();
@@ -32,8 +32,8 @@ public class InvocationProducer {
         try{
             System.out.println("+++++++++++++++++");
             System.out.println(invocation.getCallStackId());
-            System.out.println("+++++++++++++++++");
-            producer.send(new ProducerRecord<String, Invocation>(TOPIC + '#' + invocation.getCallStackId(), 0, "", invocation));
+            System.out.println("0000000000000000000");
+            producer.send(new ProducerRecord<String, Invocation>(BASE_TOPIC + invocation.getCallStackId(), 0, "", invocation));
             System.out.println("+++++++++++++++++");
         } catch(Throwable th) {
         }
