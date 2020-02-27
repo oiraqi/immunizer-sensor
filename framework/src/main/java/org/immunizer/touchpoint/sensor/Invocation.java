@@ -16,7 +16,7 @@ public class Invocation {
 	private long startTime;
 	private long endTime;
 	private long executionTime;
-	private String threadTag;
+	// private String threadTag;
 	private int callStackId;
 
 	public Invocation(String version, String fullyQualifiedMethodName, Object[] params) {
@@ -54,7 +54,7 @@ public class Invocation {
 		endTime = System.currentTimeMillis();
 		executionTime = endTime - startTime;
 		Thread currentThread = Thread.currentThread();
-		threadTag = currentThread.getName().substring(currentThread.getName().indexOf('#') + 1);
+		// threadTag = currentThread.getName().substring(currentThread.getName().indexOf('#') + 1);
 		StackTraceElement[] callStack = currentThread.getStackTrace();
 		StringBuffer sb = new StringBuffer();
 		for (StackTraceElement stackElement : callStack) {
@@ -68,9 +68,9 @@ public class Invocation {
 		return callStackId;
 	}
 
-	public String getThreadTag() {
+	/*public String getThreadTag() {
 		return threadTag;
-	}
+	}*/
 
 	public String getFullyQualifiedMethodName() {
 		return fullyQualifiedMethodName;

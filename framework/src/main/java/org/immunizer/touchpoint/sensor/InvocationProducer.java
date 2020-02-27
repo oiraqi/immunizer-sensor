@@ -30,7 +30,7 @@ public class InvocationProducer {
 
     public void send(Invocation invocation) {
         try{
-            producer.send(new ProducerRecord<String, Invocation>(TOPIC, invocation));
+            producer.send(new ProducerRecord<String, Invocation>(TOPIC , invocation.getCallStackId(), "", invocation));
         } catch(Throwable th) {
         }
     }
