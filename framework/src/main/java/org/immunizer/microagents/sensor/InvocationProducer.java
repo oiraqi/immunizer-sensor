@@ -1,4 +1,4 @@
-package org.immunizer.touchpoint.sensor;
+package org.immunizer.microagents.sensor;
 
 import java.util.Properties;
 
@@ -17,7 +17,7 @@ public class InvocationProducer {
         props.put("bootstrap.servers", BOOTSTRAP_SERVERS);
         props.put("acks", "all");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.immunizer.touchpoint.sensor.InvocationSerializer");
+        props.put("value.serializer", "org.immunizer.microagents.sensor.InvocationSerializer");
         producer = new KafkaProducer<String, Invocation>(props);
     }
 
@@ -30,11 +30,7 @@ public class InvocationProducer {
 
     public void send(Invocation invocation) {
         try{
-            System.out.println("+++++++++++++++++");
-            System.out.println(invocation.getCallStackId());
-            System.out.println("0000000000000000000");
             producer.send(new ProducerRecord<String, Invocation>(BASE_TOPIC + invocation.getCallStackId(), 0, "", invocation));
-            System.out.println("+++++++++++++++++");
         } catch(Throwable th) {
         }
     }

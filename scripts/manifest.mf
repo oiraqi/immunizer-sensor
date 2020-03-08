@@ -1,2 +1,2 @@
-Premain-Class: org.immunizer.touchpoint.sensor.SensorAgent
+Premain-Class: org.immunizer.microagents.sensor.SensorAgent
 Boot-Class-Path: .:../immunizer-sensor/framework/build/libs/agent-libs-1.0.jar

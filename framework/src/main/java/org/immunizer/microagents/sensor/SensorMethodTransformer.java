@@ -1,4 +1,4 @@
-package org.immunizer.touchpoint.sensor;
+package org.immunizer.microagents.sensor;
 
 import net.bytebuddy.utility.JavaModule;
 import net.bytebuddy.agent.builder.AgentBuilder.Transformer;

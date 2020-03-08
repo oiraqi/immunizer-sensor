@@ -1,4 +1,4 @@
-package org.immunizer.touchpoint.sensor;
+package org.immunizer.microagents.sensor;
 
 import org.apache.kafka.common.serialization.Serializer;
 import com.google.gson.Gson;

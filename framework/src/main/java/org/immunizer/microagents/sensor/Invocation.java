@@ -1,4 +1,4 @@
-package org.immunizer.touchpoint.sensor;
+package org.immunizer.microagents.sensor;
 
 import com.google.common.hash.Hashing;
 

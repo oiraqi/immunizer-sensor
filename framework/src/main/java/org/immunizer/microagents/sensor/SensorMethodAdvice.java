@@ -1,4 +1,4 @@
-package org.immunizer.touchpoint.sensor;
+package org.immunizer.microagents.sensor;
 
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
