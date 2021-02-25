@@ -4,7 +4,7 @@ import com.google.common.hash.Hashing;
 
 public class Invocation {
 
-	private String version;
+	private String swid;
 	private String fullyQualifiedMethodName;
 	//private StackTraceElement[] callStack;
 	private Object[] params;
@@ -19,9 +19,9 @@ public class Invocation {
 	// private String threadTag;
 	private String callStackId;
 
-	public Invocation(String version, String fullyQualifiedMethodName, Object[] params) {
+	public Invocation(String swid, String fullyQualifiedMethodName, Object[] params) {
 		startTime = System.currentTimeMillis();
-		this.version = version;
+		this.swid = swid;
 		this.fullyQualifiedMethodName = fullyQualifiedMethodName;
 		this.params = params;
 		exception = false;
@@ -76,8 +76,8 @@ public class Invocation {
 		return fullyQualifiedMethodName;
 	}
 
-	public String getVersion() {
-		return version;
+	public String getSwid() {
+		return swid;
 	}
 
 	public long getStartTime() {
