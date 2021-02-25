@@ -18,7 +18,7 @@ import java.util.Random;
 
 import com.google.gson.Gson;
 
-public class SensorAgent {
+public class Sensor {
 	public static void premain(String arg, Instrumentation inst) throws Exception {
 		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 		System.out.println("Sensor Microagent Launched!");
