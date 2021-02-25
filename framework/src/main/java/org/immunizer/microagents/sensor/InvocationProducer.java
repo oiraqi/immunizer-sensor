@@ -10,7 +10,8 @@ public class InvocationProducer {
     private static InvocationProducer singleton;
     private KafkaProducer<String, Invocation> producer;
     private static final String BOOTSTRAP_SERVERS = "kafka:9092";
-    private static final String BASE_TOPIC = "Invocations_";
+    private static final String BASE_TOPIC = "Invocations";
+    private String topic;
 
     private InvocationProducer() {
         Properties props = new Properties();
@@ -19,6 +20,7 @@ public class InvocationProducer {
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.immunizer.microagents.sensor.InvocationSerializer");
         producer = new KafkaProducer<String, Invocation>(props);
+        topic = BASE_TOPIC + '/' + System.getProperty("swid");
     }
 
     public static InvocationProducer getSingleton() {
@@ -30,7 +32,7 @@ public class InvocationProducer {
 
     public void send(Invocation invocation) {
         try{
-            producer.send(new ProducerRecord<String, Invocation>(BASE_TOPIC + invocation.getCallStackId(), 0, "", invocation));
+            producer.send(new ProducerRecord<String, Invocation>(topic, invocation.getCallStackId(), invocation));
         } catch(Throwable th) {
         }
     }

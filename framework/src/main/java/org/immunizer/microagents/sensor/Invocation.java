@@ -17,7 +17,7 @@ public class Invocation {
 	private long endTime;
 	private long executionTime;
 	// private String threadTag;
-	private int callStackId;
+	private String callStackId;
 
 	public Invocation(String version, String fullyQualifiedMethodName, Object[] params) {
 		startTime = System.currentTimeMillis();
@@ -61,10 +61,10 @@ public class Invocation {
 			sb.append(stackElement.toString());
 			sb.append("\n");
 		}
-		callStackId = Math.abs(Hashing.adler32().hashBytes(sb.toString().getBytes()).asInt());
+		callStackId = Hashing.adler32().hashBytes(sb.toString().getBytes()).toString();
 	}
 
-	public int getCallStackId() {
+	public String getCallStackId() {
 		return callStackId;
 	}
 
