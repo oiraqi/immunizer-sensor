@@ -44,7 +44,7 @@ public class Sensor {
 				}				
 			}
 			if (narrowable != null) {
-				extendable = narrowable.transform(new SensorMethodTransformer(any()));
+				extendable = narrowable.transform(new MethodTransformer(any()));
 			}
 			for (Config.Apply.Class clazz : config.apply.classes) {
 				Junction<? super MethodDescription> any = any(), matcher = any;
@@ -60,9 +60,9 @@ public class Sensor {
 					}
 				}
 				if (extendable == null) {
-					extendable = builder.type(named(clazz.name)).transform(new SensorMethodTransformer(matcher));
+					extendable = builder.type(named(clazz.name)).transform(new MethodTransformer(matcher));
 				} else {
-					extendable = extendable.type(named(clazz.name)).transform(new SensorMethodTransformer(matcher));
+					extendable = extendable.type(named(clazz.name)).transform(new MethodTransformer(matcher));
 				}
 			}
 			if (extendable != null) {

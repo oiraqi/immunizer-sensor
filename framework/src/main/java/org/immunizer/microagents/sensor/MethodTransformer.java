@@ -11,11 +11,11 @@ import net.bytebuddy.description.method.ParameterDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 import static net.bytebuddy.matcher.ElementMatchers.*;
 
-class SensorMethodTransformer implements Transformer {
+class MethodTransformer implements Transformer {
 
     Junction<? super MethodDescription> matcher;
 
-    public SensorMethodTransformer(Junction<? super MethodDescription> matcher) {
+    public MethodTransformer(Junction<? super MethodDescription> matcher) {
         ElementMatcher<Iterable<? extends ParameterDescription>> parameterMatcher = parameterDescriptions -> {
             return (parameterDescriptions != null && parameterDescriptions.iterator().hasNext());
         };
@@ -27,6 +27,6 @@ class SensorMethodTransformer implements Transformer {
     public DynamicType.Builder<?> transform(final DynamicType.Builder<?> builder,
             final TypeDescription typeDescription, final ClassLoader classLoader, final JavaModule module) {
 
-        return builder.method(matcher).intercept(Advice.to(SensorMethodAdvice.class));
+        return builder.method(matcher).intercept(Advice.to(MethodAdvice.class));
     }
 }

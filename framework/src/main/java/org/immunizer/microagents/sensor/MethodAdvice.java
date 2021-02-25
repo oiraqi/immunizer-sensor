@@ -3,7 +3,7 @@ package org.immunizer.microagents.sensor;
 import net.bytebuddy.asm.Advice;
 import net.bytebuddy.implementation.bytecode.assign.Assigner;
 
-public class SensorMethodAdvice {
+public class MethodAdvice {
 
     public static InvocationProducer producer = InvocationProducer.getSingleton();
 
