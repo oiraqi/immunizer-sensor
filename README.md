@@ -1,5 +1,7 @@
 # Sensor Microagent
 
+[![Join the chat at https://gitter.im/immunizer/sensor](https://badges.gitter.im/immunizer/sensor.svg)](https://gitter.im/immunizer/sensor?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This is the Java implementation of the Sensor Microagent of [Immunizer: A Scalable Loosely-Coupled Self-Protecting Software Framework using Adaptive Microagents and Parallelized Microservices](https://github.com/oiraqi/immunizer)
 
 ## Siblings
